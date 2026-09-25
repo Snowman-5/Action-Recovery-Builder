@@ -269,11 +269,14 @@ jobs:
           echo "=========================================="
           echo "===== TERMINFO BEFORE ====="
           find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -print 2>/dev/null || true
-
+          
           echo "===== REMOVING TERMINFO ====="
           find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -prune -exec rm -rf {} + 2>/dev/null || true
 
           echo "===== TERMINFO AFTER ====="
+          echo "===== REMOVING EXTRA LANGUAGES ====="
+          find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/twres/languages -type f ! -name 'en.xml' -delete 2>/dev/null || true
+          du -sh out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/twres/languages 2>/dev/null || true
           find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -print 2>/dev/null || true
 
           # Remove the existing image/ramdisk so make is forced to repack it
