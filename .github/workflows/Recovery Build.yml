@@ -278,7 +278,12 @@ jobs:
           find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/twres/languages -type f ! -name 'en.xml' -delete 2>/dev/null || true
           du -sh out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/twres/languages 2>/dev/null || true
           find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -print 2>/dev/null || true
+          echo "===== BIGGEST FILES AFTER TRIMMING ====="
+          find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type f -printf '%s %p\n' 2>/dev/null | sort -nr | head -80 || true
 
+          echo "===== BIGGEST DIRECTORIES AFTER TRIMMING ====="
+          du -ah out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root 2>/dev/null | sort -rh | head -80 || true
+          echo "=============================================="
           # Remove the existing image/ramdisk so make is forced to repack it
           rm -f out/target/product/${{ inputs.DEVICE_NAME }}/recovery.img
           rm -f out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.img
