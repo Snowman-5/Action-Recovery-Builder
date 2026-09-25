@@ -306,7 +306,7 @@ jobs:
           echo "===== REPACKING RECOVERY ====="
           
           out/host/linux-x86/bin/mkbootfs out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root > out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.cpio
-          out/host/linux-x86/bin/minigzip < out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.cpio > out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.img
+          gzip -9 -n -c out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.cpio > out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.img
           out/host/linux-x86/bin/mkbootimg --kernel out/target/product/${{ inputs.DEVICE_NAME }}/kernel --ramdisk out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.img --cmdline "console=none androidboot.hardware=qcom user_debug=31 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci boot_cpus=0-7 androidtouch.htc_event=1 disk_mode_enable=1 androidboot.selinux=permissive buildvariant=userdebug" --base 0x80000000 --pagesize 2048 --output out/target/product/${{ inputs.DEVICE_NAME }}/recovery.img --id > out/target/product/${{ inputs.DEVICE_NAME }}/recovery.id
           echo "===== FINAL IMAGE ====="
           ls -lh out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
