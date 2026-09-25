@@ -302,7 +302,8 @@ jobs:
           # Remove the existing image/ramdisk so make is forced to repack it
           rm -f out/target/product/${{ inputs.DEVICE_NAME }}/recovery.img
           rm -f out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.img
-
+          rm -f out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/sbin/me.twrp.twrpapp.apk
+          rm -f out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/sbin/privapp-permissions-twrpapp.xml
           echo "===== REPACKING RECOVERY ====="
           
           out/host/linux-x86/bin/mkbootfs out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root > out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.cpio
