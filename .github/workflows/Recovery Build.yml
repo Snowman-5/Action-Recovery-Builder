@@ -284,6 +284,21 @@ jobs:
           echo "===== BIGGEST DIRECTORIES AFTER TRIMMING ====="
           du -ah out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root 2>/dev/null | sort -rh | head -80 || true
           echo "=============================================="
+                    echo "===== OPTIONAL FILE COMPRESSION TEST ====="
+          for f in \
+            sbin/nano \
+            sbin/exfat-fuse \
+            sbin/libexfat_twrp.so \
+            sbin/mkexfatfs \
+            sbin/libtwrpmtp-legacy.so \
+            sbin/libssh.so \
+            system/usr/share/zoneinfo/tzdata; do
+            if [ -f "out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/$f" ]; then
+              printf "%s : " "$f"
+              gzip -9 -c "out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root/$f" | wc -c
+            fi
+          done
+          echo "=========================================="
           # Remove the existing image/ramdisk so make is forced to repack it
           rm -f out/target/product/${{ inputs.DEVICE_NAME }}/recovery.img
           rm -f out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.img
