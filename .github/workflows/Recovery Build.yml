@@ -248,11 +248,27 @@ jobs:
         run: |
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true
+
           if [ ${{ inputs.RECOVERY_INSTALLER }} = true ] && [ ${{ steps.recoveryinstaller.outcome == 'success' }} ]; then
             export USE_RECOVERY_INSTALLER=true
             export RECOVERY_INSTALLER_PATH=bootable/recovery/installer
           fi
-          lunch ${{ steps.buildtree.outputs.value }}_${{ inputs.DEVICE_NAME }}-eng && make ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
+
+          lunch ${{ steps.buildtree.outputs.value }}_${{ inputs.DEVICE_NAME }}-eng
+
+          echo "===== RAMDISK COMPRESSION SETTINGS ====="
+          get_build_var BOARD_RAMDISK_USE_LZMA || true
+          get_build_var LZMA_RAMDISK_TARGETS || true
+          get_build_var RECOVERY_RAMDISK_COMPRESSOR || true
+          echo "========================================"
+
+          make ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
+
+          echo "===== FINAL IMAGE ====="
+          ls -lh out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
+          stat -c '%n = %s bytes' out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
+          file out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
+          echo "======================="
         working-directory: workspace
 
       - name: Upload recovery image
