@@ -264,7 +264,9 @@ jobs:
 
                     # Build recovery once to create the complete recovery/root tree
           make recoveryimage -j$(nproc --all)
-
+          echo "===== BIGGEST FILES IN RECOVERY ROOT ====="
+          find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type f -printf '%s %p\n' 2>/dev/null | sort -nr | head -50 || true
+          echo "=========================================="
           echo "===== TERMINFO BEFORE ====="
           find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -print 2>/dev/null || true
 
