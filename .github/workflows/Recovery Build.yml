@@ -250,8 +250,7 @@ jobs:
         fi
         lunch ${{ steps.buildtree.outputs.value }}_${{ inputs.DEVICE_NAME }}-eng && make ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: workspace
-
-- name: Upload recovery image
+    - name: Upload recovery image
       uses: actions/upload-artifact@v4
       with:
         name: twrp-${{ inputs.DEVICE_NAME }}
