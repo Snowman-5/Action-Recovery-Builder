@@ -262,12 +262,25 @@ jobs:
           get_build_var RECOVERY_RAMDISK_COMPRESSOR || true
           echo "========================================"
 
-          
+                    # Build recovery once to create the complete recovery/root tree
           make recoveryimage -j$(nproc --all)
 
-          echo "===== TERMINFO LOCATIONS ====="
-          find out/target/product/${{ inputs.DEVICE_NAME }} -type d -name terminfo -print -exec du -sh {} \; 2>/dev/null || true
-          echo "=============================="
+          echo "===== TERMINFO BEFORE ====="
+          find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -print 2>/dev/null || true
+
+          echo "===== REMOVING TERMINFO ====="
+          find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -prune -exec rm -rf {} + 2>/dev/null || true
+
+          echo "===== TERMINFO AFTER ====="
+          find out/target/product/${{ inputs.DEVICE_NAME }}/recovery/root -type d -name terminfo -print 2>/dev/null || true
+
+          # Remove the existing image/ramdisk so make is forced to repack it
+          rm -f out/target/product/${{ inputs.DEVICE_NAME }}/recovery.img
+          rm -f out/target/product/${{ inputs.DEVICE_NAME }}/ramdisk-recovery.img
+
+          echo "===== REPACKING RECOVERY ====="
+          make recoveryimage -j$(nproc --all)
+          
           echo "===== FINAL IMAGE ====="
           ls -lh out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
           stat -c '%n = %s bytes' out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
