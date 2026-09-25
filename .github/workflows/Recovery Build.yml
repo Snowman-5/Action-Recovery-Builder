@@ -262,8 +262,12 @@ jobs:
           get_build_var RECOVERY_RAMDISK_COMPRESSOR || true
           echo "========================================"
 
-          make ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
+          
+          make recoveryimage -j$(nproc --all)
 
+          echo "===== TERMINFO LOCATIONS ====="
+          find out/target/product/${{ inputs.DEVICE_NAME }} -type d -name terminfo -print -exec du -sh {} \; 2>/dev/null || true
+          echo "=============================="
           echo "===== FINAL IMAGE ====="
           ls -lh out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
           stat -c '%n = %s bytes' out/target/product/${{ inputs.DEVICE_NAME }}/${{ inputs.BUILD_TARGET }}.img
